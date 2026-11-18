@@ -1,0 +1,21 @@
+{
+  "name": "deck-manager",
+  "version": "0.2.3",
+  "private": true,
+  "type": "module",
+  "description": "A local SSH and SFTP dashboard for Steam Deck",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node manager/server.mjs",
+    "manager": "node manager/server.mjs",
+    "test": "node --test tests/manager.test.mjs && python3 -m unittest discover -s tests -p 'test_manager.py'",
+    "test:manager": "npm test"
+  },
+  "dependencies": {
+    "dashjs": "^5.3.0",
+    "ssh2": "^1.17.0"
+  }
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Deck Manager</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/" aria-label="Deck Manager"><span class="brand-icon">◒</span><span>DECK<span class="brand-light"> / MANAGER</span></span></a>
+  <div class="nav-label">ВАШЕ УСТРОЙСТВО</div>
+  <nav aria-label="Разделы">
+    <button class="nav active" data-tab="connection"><span>◎</span>Подключение</button>
+    <button class="nav" data-tab="screen" title="Экран"><span aria-hidden="true">▣</span>Экран</button>
+    <button class="nav" data-tab="media" title="Медиатека"><span aria-hidden="true">▧</span>Медиатека</button>
+    <button class="nav" data-tab="files"><span>▱</span>Файлы<span class="nav-meta">SFTP</span></button>
+    <button class="nav" data-tab="themes"><span>◈</span>Темы и Decky</button>
+    <button class="nav" data-tab="terminal"><span>›_</span>Команды</button>
+  </nav>
+  <div class="sidebar-bottom"><span class="local-dot"></span> Работает на вашем компьютере<small>Прямое подключение через SSH</small></div>
+</aside>
+<main>
+  <header><span id="breadcrumb">Устройство / Подключение</span><span id="connection-badge" class="badge"><i></i>Не подключён</span></header>
+  <div id="notice" role="status" aria-live="polite" hidden></div>
+  <section id="connection" class="view">
+    <div class="page-heading"><div><div class="eyebrow">ВАШ DECK. ПОД КОНТРОЛЕМ.</div><h1>Подключение</h1><p>Настройте Steam Deck, не отрываясь от компьютера.</p></div><button id="disconnect" class="secondary" hidden>Отключиться</button></div>
+    <div class="device-hero"><div><span class="badge hero-badge" id="hero-status">ОЖИДАНИЕ ПОДКЛЮЧЕНИЯ</span><h2 id="device-name">Steam Deck</h2><p id="device-detail">Найдите устройство в сети или укажите адрес вручную.</p><div class="device-stats" id="device-stats"><span>SSH <b>—</b></span><span>Батарея <b>—</b></span><span>Свободно <b>—</b></span></div></div><div class="deck-art" aria-hidden="true"><div class="deck-left"><i></i><b>✚</b><em></em></div><div class="deck-display"><div class="orbit"></div><span>DECK</span></div><div class="deck-right"><b>⠿</b><i></i><em></em></div></div></div>
+    <div class="connection-grid">
+      <article class="card"><div class="card-heading"><h2><span class="step">01</span>Найти устройство</h2><span class="tiny-label">ЛОКАЛЬНАЯ СЕТЬ</span></div><p class="muted">Проверяем SSH, а не просто открытые порты. Имя устройства уточняется после входа.</p>
+        <form id="scan-form"><label>Где искать<select id="network"></select></label><label>Адрес устройства <span class="optional">необязательно</span><input id="scan-host" placeholder="steamdeck.local или 192.0.2.10"></label><label>SSH-порты<input id="scan-ports" value="22,2222" placeholder="22,2222 или 2200-2230"></label><button class="secondary full" id="scan-button">⌕ &nbsp; Найти в сети</button></form><div id="scan-results" class="scan-results" aria-live="polite"><p class="empty-small">Устройства появятся здесь после поиска.</p></div>
+      </article>
+      <article class="card"><div class="card-heading"><h2><span class="step">02</span>Подключиться</h2><span class="tiny-label">ЗАЩИЩЁННЫЙ SSH</span></div>
+        <form id="connect-form"><div class="form-row host-row"><label>IP или имя<input id="host" required placeholder="steamdeck.local" autocomplete="off"></label><label>Порт<input id="port" type="number" value="22" min="1" max="65535" required></label></div>
+          <div class="form-row"><label>Пользователь<input id="username" value="deck" required autocomplete="username"></label><label>Способ входа<select id="auth"><option value="password">Пароль</option><option value="paired" id="paired-option">Ключ этого проекта</option><option value="key">Мой SSH-ключ</option></select></label></div>
+          <label id="password-field">Пароль на Steam Deck<input id="password" type="password" autocomplete="current-password" placeholder="Пароль пользователя deck"></label>
+          <div id="key-fields" hidden><label>Файл приватного SSH-ключа<input id="private-key" type="file"></label><label>Пароль ключа <span class="optional">если задан</span><input id="passphrase" type="password" autocomplete="off"></label></div>
+          <p id="paired-help" class="muted" hidden>Используется ключ, созданный ранее для этого проекта.</p>
+          <div id="fingerprint-panel" class="fingerprint-panel" hidden><span id="fingerprint-label"></span><code id="fingerprint"></code><label id="trust-label" class="check"><input id="trust" type="checkbox">Доверять этому ключу устройства</label></div>
+          <button id="connect-button" class="primary full">Проверить и подключиться <span>↗</span></button>
+          <p class="micro">Пароль используется только для входа и не сохраняется.</p>
+        </form>
+      </article>
+    </div>
+    <details class="setup"><summary>Первое подключение? Подготовка Steam Deck <span>＋</span></summary><div><p>На Steam Deck перейдите в Desktop Mode, откройте Konsole и задайте пароль пользователя, если его ещё нет:</p><code>passwd</code><p>Затем включите SSH:</p><code>sudo systemctl enable --now sshd</code><p>Компьютер и Deck должны быть доступны друг другу по сети. IP можно посмотреть в настройках подключения Deck. Если SSH использует другой порт, укажите его в поиске.</p></div></details>
+  </section>
+  <section id="media" class="view" hidden>
+    <div class="page-heading"><h1>Скриншоты и видео</h1><button id="refresh-media" class="secondary" data-online><span aria-hidden="true">↻</span><span>Обновить</span></button></div>
+    <div class="offline card"><h2>Подключитесь к Steam Deck</h2><p>После подключения здесь появятся скриншоты и записи игр.</p><button class="primary" data-go="connection">К подключению ↗</button></div>
+    <div class="online-content" hidden>
+      <div class="media-filters" role="group" aria-label="Тип медиа">
+        <button data-kind="all" aria-pressed="true">Все <span></span></button>
+        <button data-kind="image" aria-pressed="false">Скриншоты <span></span></button>
+        <button data-kind="video" aria-pressed="false">Видео <span></span></button>
+      </div>
+      <p id="media-status" role="status" hidden></p>
+      <div id="media-grid" class="media-grid"></div>
+      <button id="more-media" class="secondary" hidden>Показать ещё</button>
+    </div>
+  </section>
+  <section id="screen" class="view" hidden>
+    <div class="page-heading"><div><h1>Экран Steam Deck</h1><p>Прямой просмотр через SSH. Звук и управление остаются на Deck.</p></div></div>
+    <div class="offline card"><h2>Подключитесь к Steam Deck для просмотра</h2><p>Используйте то же SSH-подключение, что и для файлов.</p><button class="primary" data-go="connection">К подключению ↗</button></div>
+    <div class="online-content" hidden>
+      <div id="screen-player" class="screen-player">
+        <div class="screen-stage">
+          <canvas id="screen-canvas" width="960" height="600" aria-label="Текущий экран Steam Deck" hidden></canvas>
+          <p id="screen-status" role="status">Трансляция остановлена</p>
+        </div>
+        <div class="screen-controls">
+          <button id="screen-toggle" class="primary">Начать трансляцию</button>
+          <span id="screen-format"></span>
+          <button id="screen-fullscreen" class="secondary">На весь экран</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="files" class="view" hidden><div class="page-heading"><div><div class="eyebrow">С КОМПЬЮТЕРА НА DECK</div><h1>Файлы</h1><p>Игры, музыка, изображения и всё, что нужно взять с собой.</p></div><button id="refresh-files" class="secondary" data-online>↻ Обновить</button></div>
+    <div class="offline card"><h2>Сначала подключитесь к Steam Deck</h2><p>После входа здесь появятся файлы устройства.</p><button class="primary" data-go="connection">К подключению ↗</button></div>
+    <div class="online-content" hidden><div class="card file-card"><form id="path-form" class="path-bar"><button type="button" id="parent-folder" class="icon-button" aria-label="На уровень выше">↑</button><input id="remote-path" value="~" aria-label="Путь на Steam Deck"><button class="secondary">Открыть</button></form><div class="file-actions"><button id="home-folder" class="text-button">⌂ Домой</button><button id="sd-folder" class="text-button">SD-карты</button><button id="new-folder" class="text-button">＋ Папка</button><span>Существующие файлы не перезаписываются</span></div><div id="dropzone" class="dropzone"><strong>Перетащите файлы сюда</strong><span>или выберите их на компьютере</span><div><button class="secondary" id="choose-files">Выбрать файлы</button><button class="text-button" id="choose-folder">Выбрать папку</button></div><input id="upload-files" type="file" multiple hidden><input id="upload-folder" type="file" webkitdirectory multiple hidden></div><div id="transfer-status" class="transfer" role="status" hidden><span></span><progress max="100" value="0"></progress><button id="cancel-upload" class="text-button">Отменить</button></div><div class="table-scroll"><table><thead><tr><th>Имя</th><th>Размер</th><th>Изменён</th><th></th></tr></thead><tbody id="file-list"></tbody></table></div></div></div>
+  </section>
+  <section id="themes" class="view" hidden><div class="page-heading"><div><div class="eyebrow">СДЕЛАЙТЕ DECK СВОИМ</div><h1>Темы и Decky</h1><p>Управляйте оформлением прямо с компьютера.</p></div><button id="refresh-themes" class="secondary" data-online>↻ Обновить</button></div><div class="offline card"><h2>Темы появятся после подключения</h2><p>Менеджер прочитает установленные плагины и настройки.</p><button class="primary" data-go="connection">К подключению ↗</button></div>
+    <div class="online-content" hidden><article class="card"><div class="card-heading"><h2>PSP XMB</h2><span class="tiny-label" id="psp-installed"></span></div><p class="muted">Домашний экран в стиле PSP. Для применения без перезапуска нужна версия плагина с поддержкой менеджера.</p><div class="palette-grid"><button class="palette classic" data-palette="classic"><span class="wave-preview"></span><b>Original Blue</b><small>Оригинальная палитра</small></button><button class="palette midnight" data-palette="midnight"><span class="wave-preview"></span><b>Midnight Blue</b><small>Глубокий синий</small></button><button class="palette violet" data-palette="violet"><span class="wave-preview"></span><b>Violet</b><small>Фиолетовое свечение</small></button><button class="palette silver" data-palette="silver"><span class="wave-preview"></span><b>Серебристый</b><small>Холодный серебристый</small></button><button class="palette graphite" data-palette="graphite"><span class="wave-preview"></span><b>Графитовый</b><small>Спокойный тёмный</small></button><button class="palette red" data-palette="red"><span class="wave-preview"></span><b>Рубиновый</b><small>Глубокий красный</small></button><button class="palette orange" data-palette="orange"><span class="wave-preview"></span><b>Янтарный</b><small>Тёплый оранжевый</small></button><button class="palette gold" data-palette="gold"><span class="wave-preview"></span><b>Золотой</b><small>Мягкое золото</small></button><button class="palette green" data-palette="green"><span class="wave-preview"></span><b>Изумрудный</b><small>Классический зелёный</small></button><button class="palette mint" data-palette="mint"><span class="wave-preview"></span><b>Мятный</b><small>Свежая бирюза</small></button><button class="palette pink" data-palette="pink"><span class="wave-preview"></span><b>Розовый</b><small>Розовый закат</small></button><button class="palette pearl" data-palette="pearl"><span class="wave-preview"></span><b>Жемчужный</b><small>Тёплый перламутр</small></button></div><div class="settings-row"><label class="check"><input id="psp-enabled" type="checkbox">PSP вместо Steam Home</label><label class="check"><input id="psp-sounds" type="checkbox">Звуки</label><label class="check"><input id="psp-motion" type="checkbox">Анимация</label><label class="check"><input id="psp-gameBackground" type="checkbox">Фон игры</label><label class="check"><input id="psp-groupByFolders" type="checkbox">Папки</label><label>Язык<select id="psp-language"><option value="ru">Русский</option><option value="en">English</option></select></label></div><div class="card-footer"><button id="install-psp" class="secondary">Установить PSP XMB</button><span>Предыдущая версия сохраняется в резервную копию.</span></div></article>
+    <article class="card"><div class="card-heading"><h2>CSS Loader</h2><div><button id="install-theme" class="secondary">＋ Установить ZIP</button><input id="theme-zip" type="file" accept=".zip" hidden></div></div><p class="muted">Включайте установленные темы. Зависимости обрабатывает сам CSS Loader.</p><div id="css-message" class="inline-message" hidden></div><button id="prepare-css" class="secondary" hidden>Настроить удалённое управление</button><div id="css-themes" class="css-themes"></div></article>
+    <article class="card"><div class="card-heading"><h2>Decky Loader</h2><span class="tiny-label">ПЛАГИНЫ</span></div><div id="plugins" class="plugin-tags"></div><details class="restart"><summary>Перезапустить Decky</summary><p class="muted">Применяет установленный плагин. Меню Decky временно перезагрузится.</p><form id="restart-form" class="form-row"><label>Пароль sudo <span class="optional">если требуется</span><input type="password" id="sudo-password" autocomplete="off"></label><button class="secondary">Перезапустить Decky</button></form></details></article></div>
+  </section>
+  <section id="terminal" class="view" hidden><div class="page-heading"><div><div class="eyebrow">ПРЯМОЙ ДОСТУП</div><h1>Команды</h1><p>Выполняйте команды на Steam Deck через SSH.</p></div></div><div class="offline card"><h2>Подключитесь, чтобы выполнять команды</h2><button class="primary" data-go="connection">К подключению ↗</button></div><div class="online-content" hidden><div class="quick-commands"><button data-command="uname -a" class="secondary">Система</button><button data-command="df -h" class="secondary">Место на диске</button><button data-command="systemctl status plugin_loader --no-pager" class="secondary">Состояние Decky</button><button data-command="ip -brief address" class="secondary">Сеть</button></div><div class="terminal-window"><div class="terminal-top"><span class="terminal-dots">● ● ●</span><span id="terminal-target">deck@steamdeck</span><button id="clear-terminal" class="text-button">Очистить</button></div><pre id="terminal-output" tabindex="0" aria-label="Вывод команд">Готов к выполнению команды.
+</pre><form id="command-form"><label for="command">$</label><textarea id="command" rows="2" spellcheck="false" placeholder="Введите команду…" required></textarea><button class="primary" id="run-command">Выполнить ↵</button></form></div><p class="micro">Каждый запуск — отдельная оболочка. Используйте <code>cd ~/папка &amp;&amp; команда</code>. Ctrl/Cmd + Enter — выполнить. До 2 минут и 2 МБ вывода; интерактивные программы запускайте в обычном SSH-терминале.</p></div>
+  </section>
+  <footer><span>DECK MANAGER</span><span>Ваш компьютер ↔ ваш Steam Deck</span></footer>
+</main>
+<dialog id="folder-dialog"><form method="dialog"><h2>Новая папка</h2><label>Имя папки<input id="folder-name" required></label><div class="dialog-actions"><button value="cancel" formnovalidate class="secondary">Отмена</button><button value="create" class="primary">Создать</button></div></form></dialog>
+<dialog id="admin-dialog"><form method="dialog"><h2>Установка PSP XMB</h2><p>Папка плагинов Decky может принадлежать root.<br>Пароль используется только для этой установки.</p><label>Пароль sudo на Steam Deck<input id="install-password" type="password" autocomplete="off"></label><div class="dialog-actions"><button value="cancel" class="secondary">Отмена</button><button value="install" class="primary">Установить</button></div></form></dialog>
+<dialog id="media-dialog" aria-labelledby="media-title">
+  <div class="media-dialog-heading"><div><h2 id="media-title"></h2><span id="media-detail"></span></div><button id="media-close" class="secondary" aria-label="Закрыть просмотр" autofocus>✕</button></div>
+  <div id="media-stage"></div>
+  <p id="media-play-status" role="status" hidden></p>
+  <div class="media-dialog-actions">
+    <button id="media-prev" class="secondary" aria-label="Предыдущий файл">←</button>
+    <button id="media-next" class="secondary" aria-label="Следующий файл">→</button>
+    <a id="media-download" class="secondary" download>Скачать ↓</a>
+  </div>
+</dialog>
+<script src="/app.js" type="module"></script>
+</body></html>
